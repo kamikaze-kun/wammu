@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 #
 # Copyright © 2003 - 2018 Michal Čihař <michal@cihar.com>
@@ -22,7 +22,6 @@ Wammu - Phone manager
 Setup script for installation using distutils
 '''
 
-from __future__ import print_function
 from setuptools import setup
 import distutils
 import distutils.command.build
@@ -166,8 +165,8 @@ class build_wammu(distutils.command.build.build, object):
         """
         desktop = os.path.join(self.build_base, 'wammu.desktop')
         distutils.log.info('generating %s -> %s', 'wammu.desktop.in', desktop)
-        in_desktop = file('wammu.desktop.in', 'r')
-        out_desktop = file(desktop, 'w')
+        in_desktop = open('wammu.desktop.in', 'r', encoding='utf-8')
+        out_desktop = open(desktop, 'w', encoding='utf-8')
         for line in in_desktop:
             if line.startswith('_Name'):
                 out_desktop.write('Name=%s\n' % msgfmt.DESKTOP_NAME)
@@ -198,7 +197,7 @@ class build_wammu(distutils.command.build.build, object):
         """
         appdata = os.path.join(self.build_base, 'wammu.appdata.xml')
         distutils.log.info('generating %s -> %s', 'wammu.appdata.xml.in', appdata)
-        in_appdata = file('wammu.appdata.xml.in', 'r')
+        in_appdata = open('wammu.appdata.xml.in', 'r', encoding='utf-8')
         tree = ElementTree.parse(in_appdata)
         description = tree.find('description')
         p1 = ElementTree.SubElement(description, 'p')
@@ -218,16 +217,16 @@ class build_wammu(distutils.command.build.build, object):
             if 'Description_1' in translation and 'Description_2' in translation:
                 p1 = ElementTree.SubElement(description, 'p')
                 p1.set('xml:lang', loc)
-                p1.text = translation['Description_1'].decode('utf-8')
+                p1.text = translation['Description_1']
                 p1.tail = '\n    '
                 p2 = ElementTree.SubElement(description, 'p')
                 p2.set('xml:lang', loc)
-                p2.text = translation['Description_2'].decode('utf-8')
+                p2.text = translation['Description_2']
                 p2.tail = '\n    '
             if 'Name' in translation:
                 element = ElementTree.Element('name')
                 element.set('xml:lang', loc)
-                element.text = translation['Name'].decode('utf-8')
+                element.text = translation['Name']
                 element.tail = '\n  '
                 component.append(
                     element
@@ -235,7 +234,7 @@ class build_wammu(distutils.command.build.build, object):
             if 'GenericName' in translation:
                 element = ElementTree.Element('summary')
                 element.set('xml:lang', loc)
-                element.text = translation['GenericName'].decode('utf-8')
+                element.text = translation['GenericName']
                 element.tail = '\n  '
                 component.append(
                     element
@@ -293,10 +292,10 @@ class build_wammu(distutils.command.build.build, object):
                 print('too old!')
                 print('You need at least wxPython %s!' % '.'.join(map(str, WXPYTHON_REQUIRED)))
                 print('You can get it from <http://www.wxpython.org>')
-            elif not wx.USE_UNICODE:
-                print('not unicode!')
-                print('You need at least wxPython %s with unicode enabled!' % '.'.join(map(str, WXPYTHON_REQUIRED)))
-                print('You can get it from <http://www.wxpython.org>')
+#            elif not wx.USE_UNICODE:
+#                print('not unicode!')
+#                print('You need at least wxPython %s with unicode enabled!' % '.'.join(map(str, WXPYTHON_REQUIRED)))
+#                print('You can get it from <http://www.wxpython.org>')
             else:
                 print('OK')
         except ImportError:
@@ -435,9 +434,9 @@ setup(
     version=Wammu.__version__,
     description="Wammu Mobile Phone Manager",
     long_description="Phone manager built on top of python-gammu. Supports many phones.",
-    author=u"Michal Cihar",
+    author="Michal Cihar",
     author_email="michal@cihar.com",
-    maintainer=u"Michal Cihar",
+    maintainer="Michal Cihar",
     maintainer_email="michal@cihar.com",
     platforms=['Linux', 'Mac OSX', 'Windows XP/2000/NT', 'Windows 95/98/ME'],
     keywords=['mobile', 'phone', 'SMS', 'contact', 'gammu', 'calendar', 'todo'],

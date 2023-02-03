@@ -26,7 +26,7 @@ Options:
         Display version information and exit.
 """
 
-from __future__ import print_function
+
 import os
 import sys
 import ast
@@ -129,8 +129,8 @@ def generate():
                          7*4+len(keys)*8,   # start of value index
                          0, 0)              # size and offset of hash table
     output += array.array("i", offsets).tostring()
-    output += ids
-    output += strs
+    output += ids.encode('utf-8')
+    output += strs.encode('utf-8')
     return output
 
 
@@ -151,7 +151,7 @@ def make(filename, outfile):
         outfile = os.path.splitext(infile)[0] + '.mo'
 
     try:
-        lines = open(infile).readlines()
+        lines = open(infile, encoding='utf-8').readlines()
     except IOError as msg:
         print(msg, file=sys.stderr)
         sys.exit(1)

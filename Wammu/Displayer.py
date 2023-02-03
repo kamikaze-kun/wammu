@@ -21,7 +21,6 @@
 Wammu - Phone manager
 HTML displayer with custom link handling
 '''
-from __future__ import unicode_literals
 
 import wx
 import wx.html

@@ -23,11 +23,11 @@ Module for writing SMS to Email.
 
 from Wammu.Utils import SearchNumber
 from Wammu.MessageDisplay import SmsTextFormat
-from email.MIMEAudio import MIMEAudio
-from email.MIMEImage import MIMEImage
-from email.MIMEText import MIMEText
-from email.MIMEMultipart import MIMEMultipart
-import email.Utils
+from email.mime.audio import MIMEAudio
+from email.mime.image import MIMEImage
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+import email.utils
 from hashlib import md5
 import time
 import tempfile
@@ -60,9 +60,9 @@ def XPMToPNG(image):
     '''
     handle, name = tempfile.mkstemp()
     os.close(handle)
-    bitmap = wx.BitmapFromXPMData(image)
+    bitmap = wx.Bitmap([s.encode() for s in image])
     bitmap.SaveFile(name, wx.BITMAP_TYPE_PNG)
-    f = file(name)
+    f = open(name)
     data = f.read()
     f.close()
     os.unlink(name)
@@ -88,7 +88,7 @@ def DateToString(date):
     '''
     Convert date to RFC 2822 format.
     '''
-    return email.Utils.formatdate(time.mktime(date.timetuple()), True)
+    return email.utils.formatdate(time.mktime(date.timetuple()), True)
 
 def SMSToMail(cfg, sms, lookuplist=None, mailbox=False):
     '''
@@ -106,7 +106,7 @@ def SMSToMail(cfg, sms, lookuplist=None, mailbox=False):
             name = '%s ' % lookuplist[i]['Name']
 
     for header in PARTS_TO_HEADER:
-        msg.add_header(HEADER_FORMAT % header, unicode(sms['SMS'][0][header]))
+        msg.add_header(HEADER_FORMAT % header, str(sms['SMS'][0][header]))
     msg.add_header(HEADER_FORMAT % 'SMSC', sms['SMS'][0]['SMSC']['Number'])
     if sms['SMS'][0]['SMSCDateTime'] is not None:
         msg.add_header(
@@ -123,7 +123,7 @@ def SMSToMail(cfg, sms, lookuplist=None, mailbox=False):
         msg['To'] = local
         msg['From'] = remote
         prepend = (
-            'Received: from %s via GSM\n' % unicode(sms['SMS'][0]['SMSC']['Number'])
+            'Received: from %s via GSM\n' % str(sms['SMS'][0]['SMSC']['Number'])
         ) + prepend
 
     if len(sms['Name']) > 0:

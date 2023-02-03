@@ -20,7 +20,6 @@
 Wammu - Phone manager
 Searching for phone
 '''
-from __future__ import print_function
 
 import wx
 import threading

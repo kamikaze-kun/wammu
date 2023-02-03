@@ -109,13 +109,13 @@ def SmsToHtml(cfg, v):
                     text = text + \
                         '<wxp module="Wammu.Image" class="Bitmap">' + \
                         '<param name="tooltip" value="' + (_('Predefined animation number %d') % i['Number']) + '">' + \
-                        '<param name="image" value="' + "['" + string.join(Wammu.Data.UnknownPredefined, "', '") + "']" + '">' + \
+                        '<param name="image" value="' + "['" + "', '".join(Wammu.Data.UnknownPredefined) + "']" + '">' + \
                         '</wxp>'
                 else:
                     text = text + \
                         '<wxp module="Wammu.Image" class="Bitmap">' + \
                         '<param name="tooltip" value="' + Wammu.Data.PredefinedAnimations[i['Number']][0] + '">' + \
-                        '<param name="image" value="' + "['" + string.join(Wammu.Data.PredefinedAnimations[i['Number']][1], "', '") + "']" + '">' + \
+                        '<param name="image" value="' + "['" + "', '".join(Wammu.Data.PredefinedAnimations[i['Number']][1]) + "']" + '">' + \
                         '</wxp>'
 
             if i['ID'] in Wammu.Data.SMSIDs['PredefinedSound']:
@@ -125,7 +125,7 @@ def SmsToHtml(cfg, v):
                     desc = Wammu.Data.PredefinedSounds[i['Number']][0]
                 text = text + \
                     '[<wxp module="Wammu.Image" class="Bitmap">' + \
-                    '<param name="image" value="' + "['" + string.join(Wammu.Data.Note, "', '") + "']" + '">' + \
+                    '<param name="image" value="' + "['" + "', '".join(Wammu.Data.Note) + "']" + '">' + \
                     '</wxp>' + desc + ']'
 
             if i['ID'] in Wammu.Data.SMSIDs['Sound']:
@@ -150,17 +150,17 @@ def SmsToHtml(cfg, v):
                 text = text + \
                     '<wxp module="Wammu.Image" class="Bitmap">' + \
                     '<param name="scale" value="(' + str(cfg.ReadInt('/Message/ScaleImage')) + ')">' + \
-                    '<param name="image" value="' + "['" + string.join(x['XPM'], "', '") + "']" + '">' + \
+                    '<param name="image" value="' + "['" + "', '".join(x['XPM']) + "']" + '">' + \
                     '</wxp>'
 
             if i['ID'] in Wammu.Data.SMSIDs['Animation']:
                 data = []
                 for x in i['Bitmap']:
-                    data.append("['" + string.join(x['XPM'], "', '") + "']")
+                    data.append("['" + "', '".join(x['XPM']) + "']")
                 text = text + \
                     '<wxp module="Wammu.Image" class="Throbber">' + \
                     '<param name="scale" value="(' + str(cfg.ReadInt('/Message/ScaleImage')) + ')">' + \
-                    '<param name="images" value="' + "[" + string.join(data, ", ") + "]" + '">' + \
+                    '<param name="images" value="' + "[" + ", ".join(data) + "]" + '">' + \
                     '</wxp>'
         if 'Unknown' in v['SMSInfo'] and v['SMSInfo']['Unknown']:
             text = ('<table border="1" bgcolor="#dd7777" color="#000000"><tr><td>%s</td></tr></table>' % _('Some parts of this message were not decoded correctly, probably due to missing support for it in Gammu.')) + text

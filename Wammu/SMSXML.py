@@ -84,7 +84,7 @@ def SMSExportXML(parent, messages, contacts):
     wildcard = _('XML File') + ' (*.xml)|*.xml|' + _('All files') + ' (*.*)|*.*;*'
     exts = ['xml']
     exts.append(None)
-    dlg = wx.FileDialog(parent, _('Select XML file…'), os.getcwd(), "", wildcard, wx.SAVE | wx.OVERWRITE_PROMPT | wx.CHANGE_DIR)
+    dlg = wx.FileDialog(parent, _('Select XML file…'), os.getcwd(), "", wildcard, wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT | wx.FD_CHANGE_DIR)
 
     if dlg.ShowModal() != wx.ID_OK:
         return
@@ -99,7 +99,7 @@ def SMSExportXML(parent, messages, contacts):
 
     parent.ShowProgress(_('Saving messages to XML'))
     try:
-        f = file(path, 'w')
+        f = open(path, 'w')
         f.write(XMLheader)
         f.write("<messages>\n")
         for i in range(count):

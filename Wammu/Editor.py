@@ -21,12 +21,9 @@
 Wammu - Phone manager
 Item editors
 '''
-from __future__ import unicode_literals
-from __future__ import print_function
 
 import wx
-from wx import DateTimeFromDMY, DateTime_Today
-import wx.calendar
+import wx.lib.calendar
 import wx.lib.masked.timectrl
 from wx.lib.masked import Ctrl as maskedCtrl
 from Wammu.Paths import MiscPath
@@ -82,7 +79,7 @@ class TimeCtrl(wx.lib.masked.timectrl.TimeCtrl):
 class CalendarPopup(wx.PopupTransientWindow):
     def __init__(self, parent):
         wx.PopupTransientWindow.__init__(self, parent, wx.SIMPLE_BORDER)
-        self.cal = wx.calendar.CalendarCtrl(self, -1, pos=(0, 0), style=wx.calendar.CAL_SEQUENTIAL_MONTH_SELECTION)
+        self.cal = wx.lib.calendar.CalendarCtrl(self, -1, pos=(0, 0), style=wx.lib.calendar.CAL_SEQUENTIAL_MONTH_SELECTION)
         sz = self.cal.GetBestSize()
         self.SetSize(sz)
 
@@ -128,10 +125,10 @@ class DateControl(wx.Panel):
             if d > 0 and d < 31:
                 if m >= 0 and m < 12:
                     if y > 1000:
-                        self.pop.cal.SetDate(DateTimeFromDMY(d, m, y))
+                        self.pop.cal.SetDate(wx.DateTime.FromDMY(d, m, y))
                         didSet = True
         if not didSet:
-            self.pop.cal.SetDate(DateTime_Today())
+            self.pop.cal.SetDate(wx.DateTime.Today())
 
         pos = self.ClientToScreen((0, 0))
         display_size = wx.GetDisplaySize()
@@ -150,7 +147,7 @@ class DateControl(wx.Panel):
         if pos.y < 0:
             pos.y = 0
         self.pop.MoveXY(pos.x, pos.y)
-        wx.calendar.EVT_CALENDAR_DAY(self, self.pop.cal.GetId(), self.OnCalSelected)
+        wx.lib.calendar.EVT_CALENDAR_DAY(self, self.pop.cal.GetId(), self.OnCalSelected)
         self.pop.Popup()
 
     def Enable(self, flag):
@@ -298,7 +295,7 @@ class GenericEditor(wx.Dialog):
                 self.AddEdit(i, entry['Entries'][i])
 
         self.more = wx.Button(self, wx.ID_ADD)
-        self.more.SetToolTipString(_('Add one more field.'))
+        self.more.SetToolTip(_('Add one more field.'))
         self.button_sizer = wx.StdDialogButtonSizer()
         self.button_sizer.AddButton(wx.Button(self, wx.ID_OK))
         self.button_sizer.AddButton(wx.Button(self, wx.ID_CANCEL))
@@ -314,7 +311,7 @@ class GenericEditor(wx.Dialog):
 
     def AddButtons(self):
         row = self.rowoffset + self.rows + 1
-        self.sizer.Add(self.button_sizer, pos=(row, 1), span=wx.GBSpan(colspan=7), flag=wx.ALIGN_RIGHT)
+        self.sizer.Add(self.button_sizer, pos=(row, 1), span=wx.GBSpan(colspan=7, rowspan=1), flag=wx.ALIGN_RIGHT)
         self.sizer.Fit(self)
         self.sizer.SetSizeHints(self)
         self.sizer.Layout()

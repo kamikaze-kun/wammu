@@ -86,7 +86,7 @@ class Settings(wx.Dialog):
             initialValue=config.Read('/Gammu/Gammurc', False),
             toolTip=_('Please enter here path to gammu configuration file you want to use.'),
             changeCallback=self.OnConfigChange,
-            fileMode=wx.OPEN
+            fileMode=wx.FD_OPEN
         )
         self.sizer_gammu.Add(wx.StaticText(self.notebook_gammu, -1, _('Gammurc path')), pos=(r, 1), flag=wx.ALIGN_CENTER_VERTICAL)
         self.sizer_gammu.Add(self.editcfgpath, pos=(r, 2), flag=wx.EXPAND)
@@ -99,25 +99,25 @@ class Settings(wx.Dialog):
         r += 1
 
         self.editauto = wx.CheckBox(self.notebook_gammu, -1, _('Automatically connect to phone on startup'))
-        self.editauto.SetToolTipString(_('Whether you want application automatically connect to phone when it is started.'))
+        self.editauto.SetToolTip(_('Whether you want application automatically connect to phone when it is started.'))
         self.editauto.SetValue(config.Read('/Wammu/AutoConnect') == 'yes')
         self.sizer_gammu.Add(self.editauto, pos=(r, 1), colspan=2)
         r += 1
 
         self.editdebug = wx.CheckBox(self.notebook_gammu, -1, _('Show debug log'))
-        self.editdebug.SetToolTipString(_('Show debug information on error output.'))
+        self.editdebug.SetToolTip(_('Show debug information on error output.'))
         self.editdebug.SetValue(config.Read('/Debug/Show') == 'yes')
         self.sizer_gammu.Add(self.editdebug, pos=(r, 1), colspan=2)
         r += 1
 
         self.editsync = wx.CheckBox(self.notebook_gammu, -1, _('Synchronize time'))
-        self.editsync.SetToolTipString(_('Synchronise time in phone with computer time while connecting.'))
+        self.editsync.SetToolTip(_('Synchronise time in phone with computer time while connecting.'))
         self.editsync.SetValue(config.ReadBool('/Gammu/SyncTime'))
         self.sizer_gammu.Add(self.editsync, pos=(r, 1), colspan=2)
         r += 1
 
         self.editinfo = wx.CheckBox(self.notebook_gammu, -1, _('Startup information'))
-        self.editinfo.SetToolTipString(_('Display startup on phone (not supported by all models).'))
+        self.editinfo.SetToolTip(_('Display startup on phone (not supported by all models).'))
         self.editinfo.SetValue(config.ReadBool('/Gammu/StartInfo'))
         self.sizer_gammu.Add(self.editinfo, pos=(r, 1), colspan=2)
         r += 1
@@ -125,7 +125,7 @@ class Settings(wx.Dialog):
         if sys.platform != 'win32':
             # locking not available on windoze
             self.editlock = wx.CheckBox(self.notebook_gammu, -1, _('Lock device'))
-            self.editlock.SetToolTipString(_('Whether to lock device in /var/lock. On some systems you might lack privileges to do so.'))
+            self.editlock.SetToolTip(_('Whether to lock device in /var/lock. On some systems you might lack privileges to do so.'))
             self.editlock.SetValue(config.ReadBool('/Gammu/LockDevice'))
             self.sizer_gammu.Add(self.editlock, pos=(r, 1), colspan=2)
             r += 1
@@ -166,25 +166,25 @@ class Settings(wx.Dialog):
         r += 1
 
         self.editname = wx.TextCtrl(self.notebook_connection, -1, '', size=(250, -1))
-        self.editname.SetToolTipString(_('Name for this configuration.'))
+        self.editname.SetToolTip(_('Name for this configuration.'))
         self.sizer_connection.Add(wx.StaticText(self.notebook_connection, -1, _('Name')), pos=(r, 1), flag=wx.ALIGN_CENTER_VERTICAL)
         self.sizer_connection.Add(self.editname, pos=(r, 2))
         r += 1
 
         self.editdev = wx.ComboBox(self.notebook_connection, -1, '', choices=Wammu.Data.Devices, size=(150, -1))
-        self.editdev.SetToolTipString(_('Device, where your phone is connected.'))
+        self.editdev.SetToolTip(_('Device, where your phone is connected.'))
         self.sizer_connection.Add(wx.StaticText(self.notebook_connection, -1, _('Device')), pos=(r, 1), flag=wx.ALIGN_CENTER_VERTICAL)
         self.sizer_connection.Add(self.editdev, pos=(r, 2), flag=wx.ALIGN_RIGHT | wx.EXPAND)
         r += 1
 
         self.editconn = wx.ComboBox(self.notebook_connection, -1, '', choices=Wammu.Data.Connections, size=(150, -1))
-        self.editconn.SetToolTipString(_('Connection which your phone understands, check Gammu documentation for connection details.'))
+        self.editconn.SetToolTip(_('Connection which your phone understands, check Gammu documentation for connection details.'))
         self.sizer_connection.Add(wx.StaticText(self.notebook_connection, -1, _('Connection')), pos=(r, 1), flag=wx.ALIGN_CENTER_VERTICAL)
         self.sizer_connection.Add(self.editconn, pos=(r, 2), flag=wx.ALIGN_RIGHT | wx.EXPAND)
         r += 1
 
         self.editmodel = wx.ComboBox(self.notebook_connection, -1, '', choices=Wammu.Data.Models, size=(150, -1))
-        self.editmodel.SetToolTipString(_('Phone model, you can usually keep here auto unless you have any problems.'))
+        self.editmodel.SetToolTip(_('Phone model, you can usually keep here auto unless you have any problems.'))
         if self.editmodel.GetValue() == '':
             self.editmodel.SetValue('auto')
         self.sizer_connection.Add(wx.StaticText(self.notebook_connection, -1, _('Model')), pos=(r, 1), flag=wx.ALIGN_CENTER_VERTICAL)
@@ -220,13 +220,13 @@ class Settings(wx.Dialog):
             initial=v,
             size=(150, -1)
         )
-        self.editscale.SetToolTipString(_('Whether images in messages should be scaled when displayed. This is usually good idea as they are pretty small.'))
+        self.editscale.SetToolTip(_('Whether images in messages should be scaled when displayed. This is usually good idea as they are pretty small.'))
         self.sizer_messages.Add(wx.StaticText(self.notebook_messages, -1, _('Scale images')), pos=(r, 1))
         self.sizer_messages.Add(self.editscale, pos=(r, 2))
         r += 1
 
         self.editformat = wx.CheckBox(self.notebook_messages, -1, _('Attempt to reformat text'))
-        self.editformat.SetToolTipString(_('If you get sometimes "compressed" messages likeTHIStext, you should be interested in this choice.'))
+        self.editformat.SetToolTip(_('If you get sometimes "compressed" messages likeTHIStext, you should be interested in this choice.'))
         self.editformat.SetValue(config.Read('/Message/Format') == 'yes')
         self.sizer_messages.Add(self.editformat, pos=(r, 1), colspan=2)
         r += 1
@@ -247,25 +247,25 @@ class Settings(wx.Dialog):
         r2 = 0
 
         self.editconcat = wx.CheckBox(self.new_message_panel_2, -1, _('Concatenated'))
-        self.editconcat.SetToolTipString(_('Create concatenated message, which allows to send longer messages.'))
+        self.editconcat.SetToolTip(_('Create concatenated message, which allows to send longer messages.'))
         self.editconcat.SetValue(config.Read('/Message/Concatenated') == 'yes')
         self.sizer_message_new_2.Add(self.editconcat, pos=(r2, 0), colspan=2)
         r2 += 1
 
         self.editunicode = wx.CheckBox(self.new_message_panel_2, -1, _('Create unicode message'))
-        self.editunicode.SetToolTipString(_('Unicode messages can contain national and other special characters, check this if you use non latin-1 characters. Your messages will require more space, so you can write less characters into single message.'))
+        self.editunicode.SetToolTip(_('Unicode messages can contain national and other special characters, check this if you use non latin-1 characters. Your messages will require more space, so you can write less characters into single message.'))
         self.editunicode.SetValue(config.Read('/Message/Unicode') == 'yes')
         self.sizer_message_new_2.Add(self.editunicode, pos=(r2, 0), colspan=2)
         r2 += 1
 
         self.editreport = wx.CheckBox(self.new_message_panel_2, -1, _('Request delivery report by default'))
-        self.editreport.SetToolTipString(_('Check to request delivery report for message.'))
+        self.editreport.SetToolTip(_('Check to request delivery report for message.'))
         self.editreport.SetValue(config.Read('/Message/DeliveryReport') == 'yes')
         self.sizer_message_new_2.Add(self.editreport, pos=(r2, 0), colspan=2)
         r2 += 1
 
         self.edit16bit = wx.CheckBox(self.new_message_panel_2, -1, _('Use 16bit Id'))
-        self.edit16bit.SetToolTipString(_('Use 16 bit Id inside message. This is safe for most cases.'))
+        self.edit16bit.SetToolTip(_('Use 16 bit Id inside message. This is safe for most cases.'))
         self.edit16bit.SetValue(config.Read('/Message/16bitId') == 'yes')
         self.sizer_message_new_2.Add(self.edit16bit, pos=(r2, 0), colspan=2)
         r2 += 1
@@ -328,7 +328,7 @@ class Settings(wx.Dialog):
             '%(LastName)s, %(FirstName)s (%(NickName)s)',
             ])
         # l10n: The %s will be replaced by list of currently supported tags, %%(value)s should be kept intact (you can translate word value).
-        self.editnamestring.SetToolTipString(
+        self.editnamestring.SetToolTip(
             _('Format string for name displaying. You can use %%(value)s format marks. Currently available values are: %s.') %
             'Name, FirstName, LastName, NickName, FormalName, Company'
         )
@@ -362,19 +362,19 @@ class Settings(wx.Dialog):
             initial=v,
             size=(150, -1)
         )
-        self.editrefresh.SetToolTipString(_('How often refresh phone state in application status bar. Enter value in miliseconds, 0 to disable.'))
+        self.editrefresh.SetToolTip(_('How often refresh phone state in application status bar. Enter value in miliseconds, 0 to disable.'))
         self.sizer_other.Add(wx.StaticText(self.notebook_other, -1, _('Refresh phone state')), pos=(r, 1))
         self.sizer_other.Add(self.editrefresh, pos=(r, 2))
         r += 1
 
         self.editconfirm = wx.CheckBox(self.notebook_other, -1, _('Confirm deleting'))
-        self.editconfirm.SetToolTipString(_('Whether to ask for confirmation when deleting entries.'))
+        self.editconfirm.SetToolTip(_('Whether to ask for confirmation when deleting entries.'))
         self.editconfirm.SetValue(config.Read('/Wammu/ConfirmDelete') == 'yes')
         self.sizer_other.Add(self.editconfirm, pos=(r, 1), colspan=2)
         r += 1
 
         self.taskbaricon = wx.CheckBox(self.notebook_other, -1, _('Task bar icon'))
-        self.taskbaricon.SetToolTipString(_('Show icon in task bar.'))
+        self.taskbaricon.SetToolTip(_('Show icon in task bar.'))
         self.taskbaricon.SetValue(config.Read('/Wammu/TaskBarIcon') == 'yes')
         self.sizer_other.Add(self.taskbaricon, pos=(r, 1), colspan=2)
         r += 1
@@ -391,8 +391,8 @@ class Settings(wx.Dialog):
             ts = 0
         self.edittime = TimeCtrl(self.notebook_other, -1, fmt24hr=True)
         Wammu.Utils.FixupMaskedEdit(self.edittime)
-        self.edittime.SetValue(wx.DateTimeFromHMS(th, tm, ts))
-        self.edittime.SetToolTipString(_('Default time to be used for newly created time fields.'))
+        self.edittime.SetValue(wx.DateTime.FromHMS(th, tm, ts))
+        self.edittime.SetToolTip(_('Default time to be used for newly created time fields.'))
         self.sizer_other.Add(wx.StaticText(self.notebook_other, -1, _('Default time')), pos=(r, 1))
         self.sizer_other.Add(self.edittime, pos=(r, 2))
         r += 1
@@ -407,7 +407,7 @@ class Settings(wx.Dialog):
             initial=v,
             size=(150, -1)
         )
-        self.editdate.SetToolTipString(_('Default date to be used for newly created time fields. Enter amount of days from today (1=tomorrow).'))
+        self.editdate.SetToolTip(_('Default date to be used for newly created time fields. Enter amount of days from today (1=tomorrow).'))
         self.sizer_other.Add(wx.StaticText(self.notebook_other, -1, _('Default date=now + x days')), pos=(r, 1))
         self.sizer_other.Add(self.editdate, pos=(r, 2))
         r += 1
@@ -422,7 +422,7 @@ class Settings(wx.Dialog):
             initial=v,
             size=(150, -1)
         )
-        self.editentries.SetToolTipString(_('How many entries will be shown in newly created item.'))
+        self.editentries.SetToolTip(_('How many entries will be shown in newly created item.'))
         self.sizer_other.Add(wx.StaticText(self.notebook_other, -1, _('Entries for new item')), pos=(r, 1))
         self.sizer_other.Add(self.editentries, pos=(r, 2))
         r += 1
@@ -430,7 +430,7 @@ class Settings(wx.Dialog):
         lst = ['Auto']
         lst += Wammu.Data.InternationalPrefixes
         self.editprefix = wx.ComboBox(self.notebook_other, -1, config.Read('/Wammu/PhonePrefix'), choices=lst, size=(150, -1))
-        self.editprefix.SetToolTipString(_('Prefix for non international phone numbers.'))
+        self.editprefix.SetToolTip(_('Prefix for non international phone numbers.'))
         self.sizer_other.Add(wx.StaticText(self.notebook_other, -1, _('Number prefix')), pos=(r, 1))
         self.sizer_other.Add(self.editprefix, pos=(r, 2))
         r += 1
@@ -461,7 +461,7 @@ class Settings(wx.Dialog):
             initial=v,
             size=(150, -1)
         )
-        self.editmaxemptyguess.SetToolTipString(_('Applies only when Wammu can not find proper count of entries to read. This number limits how many empty entries will be read before reading will be stopped.'))
+        self.editmaxemptyguess.SetToolTip(_('Applies only when Wammu can not find proper count of entries to read. This number limits how many empty entries will be read before reading will be stopped.'))
         self.sizer_hacks.Add(wx.StaticText(self.notebook_hacks, -1, _('Maximal empty entries if total is guessed')), pos=(r, 1))
         self.sizer_hacks.Add(self.editmaxemptyguess, pos=(r, 2))
         r += 1
@@ -476,7 +476,7 @@ class Settings(wx.Dialog):
             initial=v,
             size=(150, -1)
         )
-        self.editmaxemptyknown.SetToolTipString(_('In case phone reports wrongly number of entries, Wammu would try to read infinitely or till error. This number limits how many empty entries will be read before reading will be stopped.'))
+        self.editmaxemptyknown.SetToolTip(_('In case phone reports wrongly number of entries, Wammu would try to read infinitely or till error. This number limits how many empty entries will be read before reading will be stopped.'))
         self.sizer_hacks.Add(wx.StaticText(self.notebook_hacks, -1, _('Maximal empty entries if total is known')), pos=(r, 1))
         self.sizer_hacks.Add(self.editmaxemptyknown, pos=(r, 2))
         r += 1

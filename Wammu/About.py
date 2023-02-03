@@ -22,8 +22,6 @@ Wammu - Phone manager
 About dialog
 '''
 
-from __future__ import unicode_literals
-
 import wx
 import wx.html
 import wx.lib.wxpTag

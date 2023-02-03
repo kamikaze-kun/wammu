@@ -101,7 +101,7 @@ class ErrorMessage(wx.Dialog):
             os.getcwd(),
             'wammu.log',
             '',
-            wx.SAVE | wx.OVERWRITE_PROMPT | wx.CHANGE_DIR
+            wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT | wx.FD_CHANGE_DIR
         )
         if dlg.ShowModal() == wx.ID_OK:
             Wammu.ErrorLog.SaveLog(filename=dlg.GetPath())

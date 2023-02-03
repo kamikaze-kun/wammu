@@ -24,7 +24,6 @@ dependant.
 @var DEFAULT_CONFIG: Dictionary of default values.
 @var EXPANDABLE_CONFIGS: List of variables where path expansion should happen.
 '''
-from __future__ import unicode_literals
 
 import os
 import wx

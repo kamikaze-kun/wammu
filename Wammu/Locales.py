@@ -21,8 +21,6 @@ Wammu - Phone manager
 Locales initialisation and gettext wrapper
 '''
 
-from __future__ import print_function
-
 import os
 import gettext
 import locale
@@ -68,7 +66,7 @@ def ConsoleStrConv(txt):
     try:
         if isinstance(txt, str):
             return txt
-        elif isinstance(txt, unicode):
+        elif isinstance(txt, str):
             return str(CONSOLE_ENCODER(txt, 'replace')[0])
         return str(txt)
     except UnicodeEncodeError:
@@ -86,10 +84,10 @@ def StrConv(txt):
     dependant text.
     """
     try:
-        if isinstance(txt, unicode):
+        if isinstance(txt, str):
             return txt
         elif isinstance(txt, str):
-            return unicode(txt, LOCALE_CHARSET)
+            return str(txt, LOCALE_CHARSET)
         return str(txt)
     except UnicodeEncodeError:
         return '???'
@@ -112,10 +110,10 @@ def HtmlStrConv(txt):
     dependant text.
     """
     try:
-        if isinstance(txt, unicode):
+        if isinstance(txt, str):
             return txt
         elif isinstance(txt, str):
-            return unicode(txt, LOCALE_CHARSET)
+            return str(txt, LOCALE_CHARSET)
         return str(txt)
     except UnicodeEncodeError:
         return '???'
@@ -132,13 +130,13 @@ def UnicodeConv(txt):
     dependant text.
     """
     try:
-        if isinstance(txt, unicode):
+        if isinstance(txt, str):
             return txt
         elif isinstance(txt, str):
-            return unicode(txt, LOCALE_CHARSET)
-        return unicode(str(txt), LOCALE_CHARSET)
+            return str(txt, LOCALE_CHARSET)
+        return str(str(txt), LOCALE_CHARSET)
     except UnicodeEncodeError:
-        return unicode('???')
+        return str('???')
 
 
 def Init():

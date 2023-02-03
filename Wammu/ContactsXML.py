@@ -145,7 +145,7 @@ def ContactsExportXML(parent, contactsSM, contactsME):
     wildcard = _('XML File') + ' (*.xml)|*.xml|' + _('All files') + ' (*.*)|*.*;*'
     exts = ['xml']
     exts.append(None)
-    dlg = wx.FileDialog(parent, _('Select XML file…'), os.getcwd(), "", wildcard, wx.SAVE | wx.OVERWRITE_PROMPT | wx.CHANGE_DIR)
+    dlg = wx.FileDialog(parent, _('Select XML file…'), os.getcwd(), "", wildcard, wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT | wx.FD_CHANGE_DIR)
 
     if dlg.ShowModal() != wx.ID_OK:
         return
@@ -159,7 +159,7 @@ def ContactsExportXML(parent, contactsSM, contactsME):
 
     parent.ShowProgress(_('Saving contacts to XML'))
     try:
-        f = file(path, 'w')
+        f = open(path, 'w')
         f.write(XMLheader)
         f.write("<contacts>\n")
         for i in range(countSM):

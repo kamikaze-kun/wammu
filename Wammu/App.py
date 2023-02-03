@@ -21,8 +21,6 @@
 Wammu - Phone manager
 Main Wammu application
 '''
-from __future__ import unicode_literals
-from __future__ import print_function
 
 import wx
 import sys

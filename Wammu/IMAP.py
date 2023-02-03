@@ -21,7 +21,6 @@
 Wammu - Phone manager
 IMAP UTF-7 codec
 '''
-from __future__ import unicode_literals
 
 import codecs
 

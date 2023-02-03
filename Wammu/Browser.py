@@ -31,6 +31,7 @@ import Wammu.Paths
 from Wammu.Locales import StrConv, ugettext as _
 
 import wx.lib.mixins.listctrl
+import functools
 
 COLUMN_INFO = {
         'info':
@@ -168,17 +169,17 @@ class Browser(wx.ListCtrl, wx.lib.mixins.listctrl.ListCtrlAutoWidthMixin):
 
         color = wx.SystemSettings.GetColour(wx.SYS_COLOUR_3DLIGHT)
 
-        self.attr1 = wx.ListItemAttr()
+        self.attr1 = wx.ItemAttr()
 
-        self.attr2 = wx.ListItemAttr()
+        self.attr2 = wx.ItemAttr()
         self.attr2.SetBackgroundColour(color)
 
-        self.attr3 = wx.ListItemAttr()
+        self.attr3 = wx.ItemAttr()
         fnt = self.attr3.GetFont()
         fnt.SetStyle(wx.FONTSTYLE_ITALIC)
         self.attr3.SetFont(fnt)
 
-        self.attr4 = wx.ListItemAttr()
+        self.attr4 = wx.ItemAttr()
         self.attr4.SetBackgroundColour(color)
         self.attr4.SetFont(fnt)
 
@@ -370,14 +371,14 @@ class Browser(wx.ListCtrl, wx.lib.mixins.listctrl.ListCtrlAutoWidthMixin):
         Compare function for internal list of values.
         '''
         if self.sortkey == 'Location' and isinstance(item1[self.sortkey], str):
-            return self.sortorder * cmp(
+            return self.sortorder * Wammu.Utils.cmp(
                 int(item1[self.sortkey].split(',')[0]),
                 int(item2[self.sortkey].split(', ')[0]))
         elif item1[self.sortkey] is None:
             return -self.sortorder
         elif item2[self.sortkey] is None:
             return self.sortorder
-        return self.sortorder * cmp(item1[self.sortkey], item2[self.sortkey])
+        return self.sortorder * Wammu.Utils.cmp(item1[self.sortkey], item2[self.sortkey])
 
     def ShowLocation(self, loc, second=None):
         '''
@@ -461,7 +462,7 @@ class Browser(wx.ListCtrl, wx.lib.mixins.listctrl.ListCtrlAutoWidthMixin):
         self.sortkey = nextsort
 
         # do the real sort
-        self.values.sort(self.Sorter)
+        self.values.sort(key = functools.cmp_to_key(self.Sorter))
 
         # set image
         for i in range(self.GetColumnCount()):
@@ -540,20 +541,20 @@ class Browser(wx.ListCtrl, wx.lib.mixins.listctrl.ListCtrlAutoWidthMixin):
         '''
         if self.type == 'info':
             return
-        self.popup_index = evt.m_itemIndex
+        self.popup_index = evt.GetIndex()
 
         # make a menu
         menu = wx.Menu()
 
         # add some items
         if self.popup_index != -1 and self.type == 'message':
-            if self.values[evt.m_itemIndex]['State'] == 'Sent':
+            if self.values[evt.GetIndex()]['State'] == 'Sent':
                 menu.Append(self.popup_id_send, _('Resend'))
-            if self.values[evt.m_itemIndex]['State'] == 'UnSent':
+            if self.values[evt.GetIndex()]['State'] == 'UnSent':
                 menu.Append(self.popup_id_send, _('Send'))
-            if self.values[evt.m_itemIndex]['State'] in ('Read', 'UnRead'):
+            if self.values[evt.GetIndex()]['State'] in ('Read', 'UnRead'):
                 menu.Append(self.popup_id_reply, _('Reply'))
-            if self.values[evt.m_itemIndex]['Number'] != '':
+            if self.values[evt.GetIndex()]['Number'] != '':
                 menu.Append(self.popup_id_call, _('Call'))
             menu.AppendSeparator()
 
@@ -639,12 +640,12 @@ class Browser(wx.ListCtrl, wx.lib.mixins.listctrl.ListCtrlAutoWidthMixin):
         self.Resort(evt.GetColumn())
 
     def OnItemSelected(self, event):
-        self.itemno = event.m_itemIndex
-        evt = Wammu.Events.ShowEvent(data=self.values[event.m_itemIndex])
+        self.itemno = event.GetIndex()
+        evt = Wammu.Events.ShowEvent(data=self.values[event.GetIndex()])
         wx.PostEvent(self.win, evt)
 
     def OnItemActivated(self, event):
-        evt = Wammu.Events.EditEvent(data=self.values[event.m_itemIndex])
+        evt = Wammu.Events.EditEvent(data=self.values[event.GetIndex()])
         wx.PostEvent(self.win, evt)
 
     def getColumnText(self, index, col):
@@ -673,3 +674,6 @@ class Browser(wx.ListCtrl, wx.lib.mixins.listctrl.ListCtrlAutoWidthMixin):
             return self.attr3
         else:
             return self.attr4
+
+    def OnGetItemImage(self, item):
+        return -1

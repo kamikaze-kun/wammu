@@ -58,6 +58,6 @@ def ExpandPath(orig):
             return orig.replace('~', userhome, 1)
         return orig
     else:
-        if isinstance(orig, unicode):
+        if isinstance(orig, str):
             orig = orig.encode('utf-8')
         return os.path.expanduser(orig)

@@ -20,10 +20,9 @@
 Wammu - Phone manager
 Phone configuration wizard
 '''
-from __future__ import unicode_literals
 
 import wx
-import wx.wizard
+import wx.adv
 import Wammu.Paths
 import Wammu.Wizard
 import Wammu.Data
@@ -31,7 +30,7 @@ import Wammu.SettingsStorage
 import Wammu.PhoneSearch
 import Wammu.Events
 import Wammu.Utils
-import wx.lib.hyperlink
+import wx.lib.agw.hyperlink
 from Wammu.Locales import StrConv
 from Wammu.Locales import ugettext as _
 
@@ -524,7 +523,7 @@ class ConfigTypePage(Wammu.Wizard.ChoicePage):
             _('If you have no idea how to configure your phone connection, you can look at Gammu Phone Database for other users experiences:'))
         self.info.Wrap(400)
         self.sizer.Add(self.info, 0, wx.ALL, 5)
-        self.link = wx.lib.hyperlink.HyperLinkCtrl(
+        self.link = wx.lib.agw.hyperlink.HyperLinkCtrl(
                 self,
                 -1,
                 'https://%swammu.eu/phones/' % Wammu.Utils.GetWebsiteLang())
@@ -553,7 +552,7 @@ class WelcomePage(Wammu.Wizard.SimplePage):
 class ConfigureWizard:
     def __init__(self, parent, position=0):
         bmp = wx.Bitmap(Wammu.Paths.MiscPath('phonewizard'))
-        self.wiz = wx.wizard.Wizard(
+        self.wiz = wx.adv.Wizard(
                 parent,
                 -1,
                 _('Wammu Phone Configuration Wizard'),
@@ -561,9 +560,9 @@ class ConfigureWizard:
         self.wiz.settings = Wammu.SettingsStorage.Settings()
         self.wiz.settings.SetPosition(position)
 
-        self.wiz.Bind(wx.wizard.EVT_WIZARD_PAGE_CHANGING, self.OnPageChanging)
-        self.wiz.Bind(wx.wizard.EVT_WIZARD_PAGE_CHANGED, self.OnPageChanged)
-        self.wiz.Bind(wx.wizard.EVT_WIZARD_CANCEL, self.OnCancel)
+        self.wiz.Bind(wx.adv.EVT_WIZARD_PAGE_CHANGING, self.OnPageChanging)
+        self.wiz.Bind(wx.adv.EVT_WIZARD_PAGE_CHANGED, self.OnPageChanged)
+        self.wiz.Bind(wx.adv.EVT_WIZARD_CANCEL, self.OnCancel)
 
         # Create pages
         self.pg_title = WelcomePage(self.wiz)

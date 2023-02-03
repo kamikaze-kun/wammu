@@ -21,7 +21,6 @@ Wammu - Phone manager
 Misc functions like charset conversion, entries parsers,..
 '''
 
-from __future__ import print_function
 import locale
 import sys
 import re
@@ -92,7 +91,7 @@ def MatchesText(item, match, num):
             val = item[x]
         else:
             val = x
-        if type(val) in (str, unicode):
+        if type(val) in (str, str):
             if match.search(val) is not None:
                 return True
         elif num is not None and type(val) == int and num == val:
@@ -102,7 +101,7 @@ def MatchesText(item, match, num):
                 for key in testkeys:
                     try:
                         val2 = val[i][key]
-                        if type(val2) in (str, unicode):
+                        if type(val2) in (str, str):
                             if match.search(val2) is not None:
                                 return True
                         elif num is not None and type(val2) == int and num == val2:
@@ -626,3 +625,7 @@ def CompatConfig(cfg):
         cfg['Model'] = ''
 
     return cfg
+
+
+def cmp(a, b):
+    return (a > b) - (a < b)

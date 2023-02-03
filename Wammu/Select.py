@@ -20,10 +20,10 @@
 Wammu - Phone manager
 Contact and phone number select dialogs
 '''
-from __future__ import unicode_literals
 
 import wx
 import Wammu.Utils
+import functools
 from Wammu.Locales import StrConv
 from Wammu.Locales import ugettext as _
 
@@ -31,13 +31,13 @@ def SortName(item1, item2):
     '''
     Comparator function for sorting by name.
     '''
-    return cmp(item1['Name'], item2['Name'])
+    return Wammu.Utils.cmp(item1['Name'], item2['Name'])
 
 def SelectContact(parent, contactlist, index=False):
     '''
     Dialog for selecting contact.
     '''
-    contactlist.sort(SortName)
+    contactlist.sort(key = functools.cmp_to_key(SortName))
     choices = []
     for entry in contactlist:
         if entry['Name'] == '':

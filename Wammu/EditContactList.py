@@ -154,12 +154,12 @@ class EditContactList(wx.Dialog):
             os.getcwd(),
             '',
             self.wildcard,
-            wx.SAVE | wx.OVERWRITE_PROMPT | wx.CHANGE_DIR
+            wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT | wx.FD_CHANGE_DIR
         )
         if dlg.ShowModal() == wx.ID_OK:
             path = dlg.GetPath()
             try:
-                data = file(path, 'w')
+                data = open(path, 'w')
                 for line in self.currentlist:
                     data.write('%s\n' % line)
                 data.close()
@@ -178,13 +178,13 @@ class EditContactList(wx.Dialog):
             os.getcwd(),
             '',
             self.wildcard,
-            wx.OPEN | wx.CHANGE_DIR
+            wx.FD_OPEN | wx.FD_CHANGE_DIR
         )
         if dlg.ShowModal() == wx.ID_OK:
             path = dlg.GetPath()
             try:
                 newlist = []
-                data = file(path, 'r')
+                data = open(path, 'r')
                 for line in data:
                     newlist.append(line.strip())
                 data.close()

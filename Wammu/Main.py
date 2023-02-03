@@ -20,8 +20,6 @@
 Wammu - Phone manager
 Main Wammu window
 '''
-from __future__ import unicode_literals
-from __future__ import print_function
 
 import wx
 import wx.html
@@ -35,6 +33,7 @@ import tempfile
 import Wammu.Webbrowser
 import Wammu
 import re
+import functools
 
 # We can use dbus for some fancy stuff
 try:
@@ -89,7 +88,7 @@ def SortDataKeys(first, second):
         return -1
     elif second == 'info':
         return 1
-    return cmp(first, second)
+    return Wammu.Utils.cmp(first, second)
 
 
 def SortDataSubKeys(first, second):
@@ -97,7 +96,7 @@ def SortDataSubKeys(first, second):
         return -1
     elif second == '  ':
         return 1
-    return cmp(first, second)
+    return Wammu.Utils.cmp(first, second)
 
 
 displaydata = {}
@@ -172,15 +171,15 @@ class WammuFrame(wx.Frame):
         else:
             img = wx.Image(AppIconPath('wammu'), wx.BITMAP_TYPE_PNG)
 
-        self.icon = wx.EmptyIcon()
-        self.icon.CopyFromBitmap(wx.BitmapFromImage(img))
+        self.icon = wx.Icon()
+        self.icon.CopyFromBitmap(wx.Bitmap(img))
 
         if self.icon.GetWidth() == 16 and self.icon.GetHeight() == 16:
             self.icon16 = self.icon
         else:
             img.Rescale(16, 16)
-            self.icon16 = wx.EmptyIcon()
-            self.icon16.CopyFromBitmap(wx.BitmapFromImage(img))
+            self.icon16 = wx.Icon()
+            self.icon16.CopyFromBitmap(wx.Bitmap(img))
 
         self.SetIcon(self.icon)
 
@@ -188,21 +187,21 @@ class WammuFrame(wx.Frame):
         self.SetStatusWidths([-1, 400])
 
         # Associate some events with methods of this class
-        wx.EVT_CLOSE(self, self.CloseWindow)
-        Wammu.Events.EVT_PROGRESS(self, self.OnProgress)
-        Wammu.Events.EVT_SHOW_MESSAGE(self, self.OnShowMessage)
-        Wammu.Events.EVT_LINK(self, self.OnLink)
-        Wammu.Events.EVT_DATA(self, self.OnData)
-        Wammu.Events.EVT_SHOW(self, self.OnShow)
-        Wammu.Events.EVT_EDIT(self, self.OnEdit)
-        Wammu.Events.EVT_SEND(self, self.OnSend)
-        Wammu.Events.EVT_CALL(self, self.OnCall)
-        Wammu.Events.EVT_MESSAGE(self, self.OnMessage)
-        Wammu.Events.EVT_DUPLICATE(self, self.OnDuplicate)
-        Wammu.Events.EVT_REPLY(self, self.OnReply)
-        Wammu.Events.EVT_DELETE(self, self.OnDelete)
-        Wammu.Events.EVT_BACKUP(self, self.OnBackup)
-        Wammu.Events.EVT_EXCEPTION(self, self.OnException)
+        self.Bind(wx.EVT_CLOSE, self.CloseWindow)
+        self.Bind(Wammu.Events.EVT_PROGRESS, self.OnProgress)
+        self.Bind(Wammu.Events.EVT_SHOW_MESSAGE, self.OnShowMessage)
+        self.Bind(Wammu.Events.EVT_LINK, self.OnLink)
+        self.Bind(Wammu.Events.EVT_DATA, self.OnData)
+        self.Bind(Wammu.Events.EVT_SHOW, self.OnShow)
+        self.Bind(Wammu.Events.EVT_EDIT, self.OnEdit)
+        self.Bind(Wammu.Events.EVT_SEND, self.OnSend)
+        self.Bind(Wammu.Events.EVT_CALL, self.OnCall)
+        self.Bind(Wammu.Events.EVT_MESSAGE, self.OnMessage)
+        self.Bind(Wammu.Events.EVT_DUPLICATE, self.OnDuplicate)
+        self.Bind(Wammu.Events.EVT_REPLY, self.OnReply)
+        self.Bind(Wammu.Events.EVT_DELETE, self.OnDelete)
+        self.Bind(Wammu.Events.EVT_BACKUP, self.OnBackup)
+        self.Bind(Wammu.Events.EVT_EXCEPTION, self.OnException)
 
         self.splitter = wx.SplitterWindow(self, -1)
         il = wx.ImageList(16, 16)
@@ -214,12 +213,12 @@ class WammuFrame(wx.Frame):
         self.values = {}
 
         keys = list(displaydata.keys())
-        keys.sort(SortDataKeys)
+        keys.sort(key = functools.cmp_to_key(SortDataKeys))
         for type in keys:
             self.treei[type] = {}
             self.values[type] = {}
             subkeys = list(displaydata[type].keys())
-            subkeys.sort(SortDataSubKeys)
+            subkeys.sort(key = functools.cmp_to_key(SortDataSubKeys))
             for subtype in subkeys:
                 self.values[type][subtype] = displaydata[type][subtype][4]
                 if displaydata[type][subtype][0] == '':
@@ -235,7 +234,7 @@ class WammuFrame(wx.Frame):
         for type in keys:
             self.tree.Expand(self.treei[type]['  '])
 
-        wx.EVT_TREE_SEL_CHANGED(self, self.tree.GetId(), self.OnTreeSel)
+        self.Bind(wx.EVT_TREE_SEL_CHANGED, self.OnTreeSel, self.tree)
 
         # common border sizes (Gnome HIG)
         self.separatorHalf = 3
@@ -264,10 +263,10 @@ class WammuFrame(wx.Frame):
         self.searchpanel.sizer = wx.BoxSizer(wx.HORIZONTAL)
         self.searchpanel.sizer.Add(wx.StaticText(self.searchpanel, -1, _('Search: ')), 0, wx.LEFT | wx.CENTER)
         self.searchinput = wx.TextCtrl(self.searchpanel, -1)
-        self.searchinput.SetToolTipString(_('Enter text to search for, please note that search type is selected next to this field. Matching is done over all fields.'))
+        self.searchinput.SetToolTip(_('Enter text to search for, please note that search type is selected next to this field. Matching is done over all fields.'))
         self.searchpanel.sizer.Add(self.searchinput, 1, wx.CENTER | wx.ALIGN_CENTER_VERTICAL)
         self.searchchoice = wx.Choice(self.searchpanel, choices=[_('Text'), _('Regexp'), _('Wildcard')])
-        self.searchchoice.SetToolTipString(_('Select search type'))
+        self.searchchoice.SetToolTip(_('Select search type'))
         self.searchchoice.SetSelection(self.cfg.ReadInt('/Defaults/SearchType'))
         self.searchpanel.sizer.Add(self.searchchoice, 0, wx.LEFT | wx.CENTER | wx.EXPAND, self.separatorNormal)
         self.searchclear = wx.Button(self.searchpanel, wx.ID_CLEAR)
@@ -377,51 +376,51 @@ class WammuFrame(wx.Frame):
         self.SetMenuBar(self.menuBar)
 
         # menu events
-        wx.EVT_MENU(self, 100, self.WriteData)
-        wx.EVT_MENU(self, 101, self.WriteSMSData)
-        wx.EVT_MENU(self, 102, self.ReadData)
-        wx.EVT_MENU(self, 103, self.ReadSMSData)
-        wx.EVT_MENU(self, 150, self.SearchPhone)
-        wx.EVT_MENU(self, 151, self.Settings)
-        wx.EVT_MENU(self, 199, self.CloseWindow)
+        self.Bind(wx.EVT_MENU, self.WriteData, id=100)
+        self.Bind(wx.EVT_MENU, self.WriteSMSData, id=101)
+        self.Bind(wx.EVT_MENU, self.ReadData, id=102)
+        self.Bind(wx.EVT_MENU, self.ReadSMSData, id=103)
+        self.Bind(wx.EVT_MENU, self.SearchPhone, id=150)
+        self.Bind(wx.EVT_MENU, self.Settings, id=151)
+        self.Bind(wx.EVT_MENU, self.CloseWindow, id=199)
 
-        wx.EVT_MENU(self, 201, self.PhoneConnect)
-        wx.EVT_MENU(self, 202, self.PhoneDisconnect)
-        wx.EVT_MENU(self, 210, self.SyncTime)
-        wx.EVT_MENU(self, 250, self.SendFile)
+        self.Bind(wx.EVT_MENU, self.PhoneConnect, id=201)
+        self.Bind(wx.EVT_MENU, self.PhoneDisconnect, id=202)
+        self.Bind(wx.EVT_MENU, self.SyncTime, id=210)
+        self.Bind(wx.EVT_MENU, self.SendFile, id=250)
 
-        wx.EVT_MENU(self, 301, self.ShowInfo)
-        wx.EVT_MENU(self, 310, self.ShowContactsSM)
-        wx.EVT_MENU(self, 311, self.ShowContactsME)
-        wx.EVT_MENU(self, 312, self.ShowContacts)
-        wx.EVT_MENU(self, 320, self.ShowCalls)
-        wx.EVT_MENU(self, 330, self.ShowMessages)
-        wx.EVT_MENU(self, 340, self.ShowTodos)
-        wx.EVT_MENU(self, 350, self.ShowCalendar)
-        wx.EVT_MENU(self, 399, self.GetAll)
+        self.Bind(wx.EVT_MENU, self.ShowInfo, id=301)
+        self.Bind(wx.EVT_MENU, self.ShowContactsSM, id=310)
+        self.Bind(wx.EVT_MENU, self.ShowContactsME, id=311)
+        self.Bind(wx.EVT_MENU, self.ShowContacts, id=312)
+        self.Bind(wx.EVT_MENU, self.ShowCalls, id=320)
+        self.Bind(wx.EVT_MENU, self.ShowMessages, id=330)
+        self.Bind(wx.EVT_MENU, self.ShowTodos, id=340)
+        self.Bind(wx.EVT_MENU, self.ShowCalendar, id=350)
+        self.Bind(wx.EVT_MENU, self.GetAll, id=399)
 
-        wx.EVT_MENU(self, 401, self.NewContact)
-        wx.EVT_MENU(self, 402, self.NewCalendar)
-        wx.EVT_MENU(self, 403, self.NewTodo)
-        wx.EVT_MENU(self, 404, self.NewMessage)
+        self.Bind(wx.EVT_MENU, self.NewContact, id=401)
+        self.Bind(wx.EVT_MENU, self.NewCalendar, id=402)
+        self.Bind(wx.EVT_MENU, self.NewTodo, id=403)
+        self.Bind(wx.EVT_MENU, self.NewMessage, id=404)
 
-        wx.EVT_MENU(self, 501, self.Backup)
-        wx.EVT_MENU(self, 502, self.BackupSMS)
-        wx.EVT_MENU(self, 503, self.Import)
-        wx.EVT_MENU(self, 504, self.ImportSMS)
-        wx.EVT_MENU(self, 510, self.SMSToMails)
-        wx.EVT_MENU(self, 511, self.SMSToXML)
-        wx.EVT_MENU(self, 512, self.ContactsToXML)
+        self.Bind(wx.EVT_MENU, self.Backup, id=501)
+        self.Bind(wx.EVT_MENU, self.BackupSMS, id=502)
+        self.Bind(wx.EVT_MENU, self.Import, id=503)
+        self.Bind(wx.EVT_MENU, self.ImportSMS, id=504)
+        self.Bind(wx.EVT_MENU, self.SMSToMails, id=510)
+        self.Bind(wx.EVT_MENU, self.SMSToXML, id=511)
+        self.Bind(wx.EVT_MENU, self.ContactsToXML, id=512)
 
 
-        wx.EVT_MENU(self, 1001, self.Website)
-        wx.EVT_MENU(self, 1002, self.Support)
-        wx.EVT_MENU(self, 1003, self.ReportBug)
-        wx.EVT_MENU(self, 1004, self.SaveLog)
-        wx.EVT_MENU(self, 1010, self.PhoneDB)
-        wx.EVT_MENU(self, 1011, self.Talkback)
-        wx.EVT_MENU(self, 1020, self.Donate)
-        wx.EVT_MENU(self, 1100, self.About)
+        self.Bind(wx.EVT_MENU, self.Website, id=1001)
+        self.Bind(wx.EVT_MENU, self.Support, id=1002)
+        self.Bind(wx.EVT_MENU, self.ReportBug, id=1003)
+        self.Bind(wx.EVT_MENU, self.SaveLog, id=1004)
+        self.Bind(wx.EVT_MENU, self.PhoneDB, id=1010)
+        self.Bind(wx.EVT_MENU, self.Talkback, id=1011)
+        self.Bind(wx.EVT_MENU, self.Donate, id=1020)
+        self.Bind(wx.EVT_MENU, self.About, id=1100)
 
         self.timer = None
         self.TogglePhoneMenus(False)
@@ -636,16 +635,16 @@ class WammuFrame(wx.Frame):
         if self.tbicon is not None:
             # Nothing to do
             return
-        self.tbicon = wx.TaskBarIcon()
+        self.tbicon = wx.adv.TaskBarIcon()
         self.tbicon.SetIcon(self.icon16, 'Wammu')
-        self.tbicon.Bind(wx.EVT_TASKBAR_RIGHT_UP, self.OnTaskBarRightClick)
-        self.tbicon.Bind(wx.EVT_TASKBAR_LEFT_UP, self.OnTaskBarLeftClick)
+        self.tbicon.Bind(wx.adv.EVT_TASKBAR_RIGHT_UP, self.OnTaskBarRightClick)
+        self.tbicon.Bind(wx.adv.EVT_TASKBAR_LEFT_UP, self.OnTaskBarLeftClick)
         self.tbicon.Bind(wx.EVT_MENU, self.Settings, id=151)
         self.tbicon.Bind(wx.EVT_MENU, self.PhoneConnect, id=201)
         self.tbicon.Bind(wx.EVT_MENU, self.PhoneDisconnect, id=202)
-        self.tbicon.Bind(wx.EVT_MENU, self.OnTaskBarRestore, id=100000)
-        self.tbicon.Bind(wx.EVT_MENU, self.OnTaskBarMinimize, id=100001)
-        self.tbicon.Bind(wx.EVT_MENU, self.OnTaskBarClose, id=100002)
+        self.tbicon.Bind(wx.EVT_MENU, self.OnTaskBarRestore, id=10000)
+        self.tbicon.Bind(wx.EVT_MENU, self.OnTaskBarMinimize, id=10001)
+        self.tbicon.Bind(wx.EVT_MENU, self.OnTaskBarClose, id=10002)
 
     def OnTaskBarRightClick(self, evt):
         menutaskbar = wx.Menu()
@@ -654,10 +653,10 @@ class WammuFrame(wx.Frame):
         menutaskbar.AppendSeparator()
         menutaskbar.Append(151, _('Settings'))
         menutaskbar.AppendSeparator()
-        menutaskbar.Append(100000, _('Restore'))
-        menutaskbar.Append(100001, _('Minimize'))
+        menutaskbar.Append(10000, _('Restore'))
+        menutaskbar.Append(10001, _('Minimize'))
         menutaskbar.AppendSeparator()
-        menutaskbar.Append(100002, _('Close'))
+        menutaskbar.Append(10002, _('Close'))
         self.tbicon.PopupMenu(menutaskbar)
         menutaskbar.Destroy()
 
@@ -751,7 +750,7 @@ class WammuFrame(wx.Frame):
         else:
             self.OnTimer()
             self.timer = wx.Timer(self, self.TimerId)
-            wx.EVT_TIMER(self, self.TimerId, self.OnTimer)
+            self.Bind(wx.EVT_TIMER, self.OnTimer, self.timer)
             self.timer.Start(repeat)
 
     def DoDebug(self, newdebug):
@@ -767,8 +766,8 @@ class WammuFrame(wx.Frame):
                 self.CloseLogWindow()
 
     def SaveWinSize(self, win, key):
-        x, y = win.GetPositionTuple()
-        w, h = win.GetSizeTuple()
+        x, y = win.GetPosition()
+        w, h = win.GetSize()
 
         self.cfg.WriteInt('/%s/X' % key, x)
         self.cfg.WriteInt('/%s/Y' % key, y)
@@ -1478,7 +1477,7 @@ class WammuFrame(wx.Frame):
                     os.getcwd(),
                     "",
                     wildcard,
-                    wx.SAVE | wx.OVERWRITE_PROMPT | wx.CHANGE_DIR
+                    wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT | wx.FD_CHANGE_DIR
                 )
             else:
                 dlg = wx.FileDialog(
@@ -1487,7 +1486,7 @@ class WammuFrame(wx.Frame):
                     os.getcwd(),
                     "",
                     wildcard,
-                    wx.OPEN | wx.CHANGE_DIR
+                    wx.FD_OPEN | wx.FD_CHANGE_DIR
                 )
         else:
             if save:
@@ -1497,7 +1496,7 @@ class WammuFrame(wx.Frame):
                     os.getcwd(),
                     "",
                     wildcard,
-                    wx.SAVE | wx.OVERWRITE_PROMPT | wx.CHANGE_DIR
+                    wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT | wx.FD_CHANGE_DIR
                 )
             else:
                 dlg = wx.FileDialog(
@@ -1506,7 +1505,7 @@ class WammuFrame(wx.Frame):
                     os.getcwd(),
                     "",
                     wildcard,
-                    wx.OPEN | wx.CHANGE_DIR
+                    wx.FD_OPEN | wx.FD_CHANGE_DIR
                 )
         if dlg.ShowModal() == wx.ID_OK:
             path = dlg.GetPath()
@@ -2240,7 +2239,7 @@ class WammuFrame(wx.Frame):
             os.getcwd(),
             '',
             _('All files') + ' (*.*)|*.*',
-            wx.OPEN | wx.CHANGE_DIR
+            wx.FD_OPEN | wx.FD_CHANGE_DIR
         )
         if dlg.ShowModal() == wx.ID_OK:
             path = dlg.GetPath()
@@ -2508,7 +2507,7 @@ class WammuFrame(wx.Frame):
             os.getcwd(),
             'wammu.log',
             '',
-            wx.SAVE | wx.OVERWRITE_PROMPT | wx.CHANGE_DIR
+            wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT | wx.FD_CHANGE_DIR
         )
         if dlg.ShowModal() == wx.ID_OK:
             Wammu.ErrorLog.SaveLog(filename=dlg.GetPath())

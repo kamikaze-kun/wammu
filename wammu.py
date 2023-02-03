@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 #
 # Copyright © 2003 - 2018 Michal Čihař <michal@cihar.com>
@@ -21,8 +21,6 @@
 Wammu - Phone manager
 Execution script
 '''
-from __future__ import unicode_literals
-from __future__ import print_function
 
 import os
 import sys

@@ -20,7 +20,6 @@
 Wammu - Phone manager
 Data path definition and misc path functions
 '''
-from __future__ import print_function
 
 import os
 import os.path

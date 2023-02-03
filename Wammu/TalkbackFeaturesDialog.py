@@ -58,8 +58,8 @@ class TalkbackFeaturesDialog(wx.Dialog):
     def __set_properties(self):
         # begin wxGlade: TalkbackFeaturesDialog.__set_properties
         self.SetTitle(_("Select features"))
-        self.feature_phonebook_checkbox.SetToolTipString(_("You can access name and phone number."))
-        self.feature_enhancedphonebook_checkbox.SetToolTipString(_("You have access to more phone numbers per entry or additional fields as email."))
+        self.feature_phonebook_checkbox.SetToolTip(_("You can access name and phone number."))
+        self.feature_enhancedphonebook_checkbox.SetToolTip(_("You have access to more phone numbers per entry or additional fields as email."))
         # end wxGlade
 
     def __do_layout(self):

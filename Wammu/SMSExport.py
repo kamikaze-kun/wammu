@@ -38,7 +38,7 @@ def SMSToMailbox(parent, messages, contacts):
     wildcard = _('Mailboxes') + ' (*.mbox)|*.mbox|' + _('All files') + ' (*.*)|*.*;*'
     exts = ['mbox']
     exts.append(None)
-    dlg = wx.FileDialog(parent, _('Select mailbox file…'), os.getcwd(), "", wildcard, wx.SAVE | wx.OVERWRITE_PROMPT | wx.CHANGE_DIR)
+    dlg = wx.FileDialog(parent, _('Select mailbox file…'), os.getcwd(), "", wildcard, wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT | wx.FD_CHANGE_DIR)
 
     if dlg.ShowModal() != wx.ID_OK:
         return
@@ -53,7 +53,7 @@ def SMSToMailbox(parent, messages, contacts):
 
     parent.ShowProgress(_('Saving messages to mailbox'))
     try:
-        f = file(path, 'w')
+        f = open(path, 'w')
         for i in range(count):
             if not parent.progress.Update(i * 100 / count):
                 del parent.progress
@@ -156,7 +156,7 @@ def SMSToMaildir(parent, messages, contacts):
             if res == wx.ID_NO:
                 continue
         try:
-            f = file(outfile, 'w')
+            f = open(outfile, 'w')
             f.write(data)
             f.close()
         except IOError:
@@ -254,7 +254,7 @@ def SMSToIMAP(parent, messages, contacts):
             continue
 
         try:
-            folders.append(unicode(path, 'imap4-utf-7'))
+            folders.append(str(path, 'imap4-utf-7'))
         except UnicodeDecodeError:
             # Ignore folders which can not be properly converted
             pass

@@ -55,7 +55,7 @@ def Handler(errtype, value, tback):
 
 
     # detection of same errors
-    tracehash = md5('%s,%s' % (textexc, texttrace)).hexdigest()
+    tracehash = md5(('%s,%s' % (textexc, texttrace)).encode('utf-8')).hexdigest()
     if tracehash in ERROR_HISTORY:
         print('Same error already detected, not showing dialog!')
         print(texttrace)
@@ -114,7 +114,7 @@ def Handler(errtype, value, tback):
 
     # Include exception info in crash file
     if outf is not None:
-        outf.write(text.encode('utf-8'))
+        outf.write(text)
         outf.close()
 
     # display error

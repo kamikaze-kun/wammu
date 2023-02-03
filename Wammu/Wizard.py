@@ -22,16 +22,16 @@ Wizard helper classes
 '''
 
 import wx
-import wx.wizard
+import wx.adv
 import Wammu.Paths
 
 
-class SimplePage(wx.wizard.PyWizardPage):
+class SimplePage(wx.adv.WizardPage):
     """
     Simple wizard page with unlimited rows of text.
     """
     def __init__(self, parent, titletext, bodytext=None, detailtexts=None):
-        wx.wizard.PyWizardPage.__init__(self, parent)
+        wx.adv.WizardPage.__init__(self, parent)
         self.parent = parent
         self.sizer = wx.BoxSizer(wx.VERTICAL)
         self.SetSizer(self.sizer)

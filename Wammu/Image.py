@@ -66,18 +66,18 @@ class EncodedBitmap(wx.StaticBitmap):
         else:
             bitmap = wx.BitmapFromImage(image)
         wx.StaticBitmap.__init__(self, parent, -1, bitmap, (0, 0))
-        self.SetToolTipString(tooltip)
+        self.SetToolTip(tooltip)
 
 class Bitmap(wx.StaticBitmap):
     def __init__(self, parent, tooltip='Image', image=None, size=None, scale=1):
         if image is None:
             image = defaultbmp
-        bitmap = wx.BitmapFromXPMData(image)
+        bitmap = wx.Bitmap([s.encode() for s in image])
         if scale > 1:
             img = wx.ImageFromBitmap(bitmap)
             bitmap = wx.BitmapFromImage(img.Scale(bitmap.GetWidth() * scale, bitmap.GetHeight() * scale))
         wx.StaticBitmap.__init__(self, parent, -1, bitmap, (0, 0))
-        self.SetToolTipString(tooltip)
+        self.SetToolTip(tooltip)
 
 class Throbber(wx.lib.throbber.Throbber):
     def __init__(self, parent, tooltip='Animation', images=None, size=None, scale=1, delay=0.1):
@@ -85,10 +85,10 @@ class Throbber(wx.lib.throbber.Throbber):
             images = [defaultbmp]
         bitmaps = []
         for im in images:
-            bitmap = wx.BitmapFromXPMData(im)
+            bitmap = wx.Bitmap([s.encode() for s in im])
             if scale > 1:
                 img = wx.ImageFromBitmap(bitmap)
                 bitmap = wx.BitmapFromImage(img.Scale(bitmap.GetWidth() * scale, bitmap.GetHeight() * scale))
             bitmaps.append(bitmap)
         wx.lib.throbber.Throbber.__init__(self, parent, -1, bitmaps, frameDelay=delay)
-        self.SetToolTipString(tooltip)
+        self.SetToolTip(tooltip)

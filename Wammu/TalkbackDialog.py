@@ -24,7 +24,7 @@ Gammu Phone Database Talkback window
 '''
 
 
-import httplib
+import http.client
 import urllib
 import Wammu.Webbrowser
 import re
@@ -47,7 +47,7 @@ FAIL_MATCHER = re.compile('Invalid values: (.*)')
 class TalkbackDialog(wx.Dialog):
     def __init__(self, parent, config, phoneid=0, *args, **kwds):
         # begin wxGlade: TalkbackDialog.__init__
-        kwds["style"] = wx.DEFAULT_DIALOG_STYLE | wx.RESIZE_BORDER | wx.THICK_FRAME
+        kwds["style"] = wx.DEFAULT_DIALOG_STYLE | wx.RESIZE_BORDER
         wx.Dialog.__init__(self, parent, *args, **kwds)
         self.main_panel = wx.Panel(self, -1)
         self.info_label = wx.StaticText(self, -1, _("Please share your experiences with Wammu and Gammu which is backend library. When you fill in following form, other users can benefit from your experiences in Gammu Phone Database. Only information you see here will be submited."))
@@ -109,11 +109,11 @@ class TalkbackDialog(wx.Dialog):
     def __set_properties(self):
         # begin wxGlade: TalkbackDialog.__set_properties
         self.SetTitle(_("Gammu Phone Database Talkback"))
-        self.features_label.SetToolTipString(_("Select which features work correctly with your phone"))
-        self.gammu_version_label.SetToolTipString(_("This information is automatically included in report."))
-        self.note_text_ctrl.SetToolTipString(_("Describe some glitches of this phone or other experiences with Gammu."))
-        self.email_text_ctrl.SetToolTipString(_("Please enter valid mail here, choose display options below. Your email won't be given or sold to anybody."))
-        self.mangle_choice.SetToolTipString(_("If you don't want to display email clear text, please select one mangling option."))
+        self.features_label.SetToolTip(_("Select which features work correctly with your phone"))
+        self.gammu_version_label.SetToolTip(_("This information is automatically included in report."))
+        self.note_text_ctrl.SetToolTip(_("Describe some glitches of this phone or other experiences with Gammu."))
+        self.email_text_ctrl.SetToolTip(_("Please enter valid mail here, choose display options below. Your email won't be given or sold to anybody."))
+        self.mangle_choice.SetToolTip(_("If you don't want to display email clear text, please select one mangling option."))
         self.mangle_choice.SetSelection(0)
         # end wxGlade
 
@@ -243,7 +243,7 @@ class TalkbackDialog(wx.Dialog):
         # Convert unicode to raw utf-8 strigns so that they can be properly
         # handled by urllib and later by website
         for x in params_dict.keys():
-            if type(params_dict[x]) == unicode:
+            if type(params_dict[x]) == str:
                 params_dict[x] = params_dict[x].encode('utf-8')
 
         # Encode request and prepare headers
@@ -254,7 +254,7 @@ class TalkbackDialog(wx.Dialog):
         }
 
         # Perform request
-        conn = httplib.HTTPConnection('wammu.eu')
+        conn = http.client.HTTPConnection('wammu.eu')
         try:
             conn.request('POST', '/api/phones/new/', params, headers)
 

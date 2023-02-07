@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 # Written by Martin v. Löwis <loewis@informatik.hu-berlin.de>
 # Plural forms support added by alexander smishlajev <alex@tycobka.lv>
@@ -78,34 +78,34 @@ def usage(code, msg=''):
 
 def add(id, str, fuzzy):
     "Add a non-fuzzy translation to the dictionary."
-    if not fuzzy and str and not str.startswith('\0'):
+    if not fuzzy and str and not str.startswith(b'\0'):
         MESSAGES[id] = str
-        if id == DESKTOP_NAME:
-            DESKTOP_TRANSLATIONS['Name'] = str
-        elif id == DESKTOP_GENERIC_NAME:
-            DESKTOP_TRANSLATIONS['GenericName'] = str
-        elif id == DESKTOP_COMMENT:
-            DESKTOP_TRANSLATIONS['Comment'] = str
-        elif id == DESKTOP_KEYWORDS:
-            DESKTOP_TRANSLATIONS['Keywords'] = str
-        elif id == DESKTOP_DESCRIPTION_1:
-            DESKTOP_TRANSLATIONS['Description_1'] = str
-        elif id == DESKTOP_DESCRIPTION_2:
-            DESKTOP_TRANSLATIONS['Description_2'] = str
+        if id.decode() == DESKTOP_NAME:
+            DESKTOP_TRANSLATIONS['Name'] = str.decode()
+        elif id.decode() == DESKTOP_GENERIC_NAME:
+            DESKTOP_TRANSLATIONS['GenericName'] = str.decode()
+        elif id.decode() == DESKTOP_COMMENT:
+            DESKTOP_TRANSLATIONS['Comment'] = str.decode()
+        elif id.decode() == DESKTOP_KEYWORDS:
+            DESKTOP_TRANSLATIONS['Keywords'] = str.decode()
+        elif id.decode() == DESKTOP_DESCRIPTION_1:
+            DESKTOP_TRANSLATIONS['Description_1'] = str.decode()
+        elif id.decode() == DESKTOP_DESCRIPTION_2:
+            DESKTOP_TRANSLATIONS['Description_2'] = str.decode()
 
 
 def generate():
     "Return the generated output."
     # the keys are sorted in the .mo file
-    keys = list(sorted(MESSAGES.keys()))
+    keys = sorted(MESSAGES.keys())
     offsets = []
-    ids = strs = ''
+    ids = strs = b''
     for id in keys:
         # For each string, we need size and file offset.  Each string is NUL
         # terminated; the NUL does not count into the size.
         offsets.append((len(ids), len(id), len(strs), len(MESSAGES[id])))
-        ids += id + '\0'
-        strs += MESSAGES[id] + '\0'
+        ids += id + b'\0'
+        strs += MESSAGES[id] + b'\0'
     output = ''
     # The header is 7 32-bit unsigned integers.  We don't use hash tables, so
     # the keys start right after the index tables.
@@ -128,9 +128,9 @@ def generate():
                          7*4,               # start of key index
                          7*4+len(keys)*8,   # start of value index
                          0, 0)              # size and offset of hash table
-    output += array.array("i", offsets).tostring()
-    output += ids.encode('utf-8')
-    output += strs.encode('utf-8')
+    output += array.array("i", offsets).tobytes()
+    output += ids
+    output += strs
     return output
 
 
@@ -151,18 +151,19 @@ def make(filename, outfile):
         outfile = os.path.splitext(infile)[0] + '.mo'
 
     try:
-        lines = open(infile, encoding='utf-8').readlines()
+        lines = open(infile, 'rb').readlines()
     except IOError as msg:
         print(msg, file=sys.stderr)
         sys.exit(1)
 
     section = None
     fuzzy = 0
-    msgid = msgstr = ''
+    msgid = msgstr = b''
 
     # Parse the catalog
     lno = 0
     for l in lines:
+        l = l.decode()
         lno += 1
         # If we get a comment line after a msgstr, this is a new entry
         if l[0] == '#' and section == STR:
@@ -177,7 +178,7 @@ def make(filename, outfile):
             continue
         # Start of msgid_plural section, separate from singular form with \0
         if l.startswith('msgid_plural'):
-            msgid += '\0'
+            msgid += b'\0'
             l = l[12:]
         # Now we are in a msgid section, output previous section
         elif l.startswith('msgid'):
@@ -185,7 +186,7 @@ def make(filename, outfile):
                 add(msgid, msgstr, fuzzy)
             section = ID
             l = l[5:]
-            msgid = msgstr = ''
+            msgid = msgstr = b''
         # Now we are in a msgstr section
         elif l.startswith('msgstr'):
             section = STR
@@ -194,7 +195,7 @@ def make(filename, outfile):
             if l.startswith('['):
                 # Separate plural forms with \0
                 if not l.startswith('[0]'):
-                    msgstr += '\0'
+                    msgstr += b'\0'
                 # Ignore the index - must come in sequence
                 l = l[l.index(']') + 1:]
         # Skip empty lines
@@ -203,9 +204,9 @@ def make(filename, outfile):
             continue
         l = ast.literal_eval(l)
         if section == ID:
-            msgid += l
+            msgid += l.encode()
         elif section == STR:
-            msgstr += l
+            msgstr += l.encode()
         else:
             print('Syntax error on %s:%d before:' % (infile, lno), file=sys.stderr)
             print(l, file=sys.stderr)

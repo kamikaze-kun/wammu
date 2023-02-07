@@ -169,17 +169,31 @@ class Browser(wx.ListCtrl, wx.lib.mixins.listctrl.ListCtrlAutoWidthMixin):
 
         color = wx.SystemSettings.GetColour(wx.SYS_COLOUR_3DLIGHT)
 
-        self.attr1 = wx.ItemAttr()
+        wxnew = wx.MAJOR_VERSION >= 4 and wx.MINOR_VERSION >= 1
 
-        self.attr2 = wx.ItemAttr()
+        if wxnew:
+            self.attr1 = wx.ItemAttr()
+        else:
+            self.attr1 = wx.ListItemAttr()
+
+        if wxnew:
+            self.attr2 = wx.ItemAttr()
+        else:
+            self.attr2 = wx.ListItemAttr()
         self.attr2.SetBackgroundColour(color)
 
-        self.attr3 = wx.ItemAttr()
+        if wxnew:
+            self.attr3 = wx.ItemAttr()
+        else:
+            self.attr3 = wx.ListItemAttr()
         fnt = self.attr3.GetFont()
         fnt.SetStyle(wx.FONTSTYLE_ITALIC)
         self.attr3.SetFont(fnt)
 
-        self.attr4 = wx.ItemAttr()
+        if wxnew:
+            self.attr4 = wx.ItemAttr()
+        else:
+            self.attr4 = wx.ListItemAttr()
         self.attr4.SetBackgroundColour(color)
         self.attr4.SetFont(fnt)
 

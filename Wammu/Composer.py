@@ -116,7 +116,7 @@ class StyleEdit(wx.Dialog):
 
         self.ok = wx.Button(self, wx.ID_OK)
         self.sizer.Add(self.ok, pos=(row, 1), span=wx.GBSpan(colspan=maxcol, rowspan=1), flag=wx.ALIGN_CENTER)
-        wx.EVT_BUTTON(self, wx.ID_OK, self.Okay)
+        self.Bind(wx.EVT_BUTTON, self.Okay, id=wx.ID_OK)
 
         self.sizer.Add(5, 5, pos=(row + 1, maxcol + 1))
 
@@ -166,19 +166,19 @@ class TextEditor(GenericEditor):
         self.concat = wx.CheckBox(self, -1, _('Concatenated'))
         self.concat.SetToolTip(_('Create concatenated message, which allows to send longer messages.'))
         self.concat.SetValue(self.part['ID'] != 'Text')
-        wx.EVT_CHECKBOX(self.concat, self.concat.GetId(), self.OnConcatChange)
+        self.concat.Bind(wx.EVT_CHECKBOX, self.OnConcatChange, id=self.concat.GetId())
         self.sizer.Add(self.concat, pos=(1, 0), flag=wx.ALIGN_CENTER_VERTICAL)
 
         self.leninfo = wx.StaticText(self, -1, '')
         self.sizer.Add(self.leninfo, pos=(1, 3), flag=wx.ALIGN_RIGHT)
 
         self.stylebut = wx.Button(self, -1, _('Style'))
-        wx.EVT_BUTTON(self, self.stylebut.GetId(), self.StylePressed)
+        self.Bind(wx.EVT_BUTTON, self.StylePressed, id=self.stylebut.GetId())
         self.sizer.Add(self.stylebut, pos=(1, 1), flag=wx.ALIGN_CENTER)
 
         self.OnConcatChange()
 
-        wx.EVT_TEXT(self.edit, self.edit.GetId(), self.TextChanged)
+        self.edit.Bind(wx.EVT_TEXT, self.TextChanged, id=self.edit.GetId())
         if 'Buffer' in self.part:
             self.edit.SetValue(self.part['Buffer'])
 
@@ -248,7 +248,7 @@ class PredefinedAnimEditor(GenericEditor):
         bitmap = wx.Bitmap([s.encode() for s in Wammu.Data.UnknownPredefined])
         self.bitmap = wx.StaticBitmap(self, -1, bitmap, (0, 0))
 
-        wx.EVT_CHOICE(self.edit, self.edit.GetId(), self.OnChange)
+        self.edit.Bind(wx.EVT_CHOICE, self.OnChange, id=self.edit.GetId())
 
         if 'Number' not in self.part:
             self.part['Number'] = 0
@@ -476,7 +476,7 @@ class SMSComposer(wx.Dialog):
             self.OnSend()
 
         for x in SMSParts:
-            self.available.InsertImageStringItem(x[0], x[1], x[0])
+            self.available.InsertItem(x[0], x[1], x[0])
         self.available.SetItemState(0, wx.LIST_STATE_FOCUSED | wx.LIST_STATE_SELECTED, wx.LIST_STATE_FOCUSED | wx.LIST_STATE_SELECTED)
 
         self.GenerateCurrent()
@@ -510,11 +510,11 @@ class SMSComposer(wx.Dialog):
             x = self.entry['SMSInfo']['Entries'][i]
             for p in SMSParts:
                 if x['ID'] in p[2]:
-                    self.current.InsertImageStringItem(i, p[1], p[0])
+                    self.current.InsertItem(i, p[1], p[0])
                     found = True
                     break
             if not found:
-                self.current.InsertImageStringItem(i, _('Not supported ID: %s') % x['ID'], -1)
+                self.current.InsertItem(i, _('Not supported ID: %s') % x['ID'], -1)
                 print('Not supported ID: %s' % x['ID'])
 
         count = self.current.GetItemCount()

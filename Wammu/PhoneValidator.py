@@ -46,7 +46,7 @@ class PhoneValidator(wx.PyValidator):
     Validator for phone numbers.
     '''
     def __init__(self, multi=False, pause=False, empty=False):
-        wx.PyValidator.__init__(self)
+        wx.Validator.__init__(self)
         self.multi = multi
         self.pause = pause
         self.empty = empty

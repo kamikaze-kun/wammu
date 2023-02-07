@@ -169,7 +169,7 @@ def UseLocal():
 
 def ngettext(msgid1, msgid2, n):
     if _TRANSLATION:
-        return _TRANSLATION.ungettext(msgid1, msgid2, n)
+        return _TRANSLATION.ngettext(msgid1, msgid2, n)
     if n == 1:
         return msgid1
     else:

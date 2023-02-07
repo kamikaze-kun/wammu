@@ -167,7 +167,7 @@ class TalkbackDialog(wx.Dialog):
         window_grid_sizer.Add(self.button_sizer, 0, wx.ALIGN_RIGHT, 0)
         window_grid_sizer.Fit(self)
         self.Layout()
-        wx.EVT_BUTTON(self, wx.ID_OK, self.Okay)
+        self.Bind(wx.EVT_BUTTON, self.Okay, id=wx.ID_OK)
 
     def OnFeatures(self, event): # wxGlade: TalkbackDialog.<event_handler>
         dlg = Wammu.TalkbackFeaturesDialog.TalkbackFeaturesDialog(self)
@@ -247,7 +247,7 @@ class TalkbackDialog(wx.Dialog):
                 params_dict[x] = params_dict[x].encode('utf-8')
 
         # Encode request and prepare headers
-        params = urllib.urlencode(params_dict)
+        params = urllib.parse.urlencode(params_dict)
         headers = {
             'Content-type': 'application/x-www-form-urlencoded',
             'Accept': 'text/plain'
